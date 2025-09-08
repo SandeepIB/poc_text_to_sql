@@ -43,6 +43,20 @@ class PatternSQLGenerator(BaseSQLGenerator):
         if self._matches_pattern(q, ['distribution', 'rating']):
             return self._build_rating_distribution_query()
         
+        # Concentration group queries
+        if self._matches_any_pattern(q, [
+            ['concentration', 'group', 'lowest', 'exposure'],
+            ['concentration', 'group', 'minimum', 'exposure'],
+            ['concentration', 'lowest', 'aggregate']
+        ]):
+            return self._build_concentration_group_query('ASC')
+        
+        if self._matches_any_pattern(q, [
+            ['concentration', 'group', 'highest', 'exposure'],
+            ['concentration', 'group', 'maximum', 'exposure']
+        ]):
+            return self._build_concentration_group_query('DESC')
+        
         # Sector queries
         if self._matches_pattern(q, ['average', 'sector', 'notional']):
             return self._build_sector_average_query()
@@ -180,9 +194,22 @@ GROUP BY counterparty_sector
 ORDER BY total_exposure {order} 
 LIMIT 1;"""
     
+    def _build_concentration_group_query(self, order: str) -> str:
+        """Build query for concentration group exposure."""
+        return f"""SELECT 
+    concentration_group, 
+    SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_exposure 
+FROM concentration_new 
+WHERE concentration_group IS NOT NULL 
+GROUP BY concentration_group 
+ORDER BY total_exposure {order} 
+LIMIT 1;"""
+    
     def _build_default_query(self, question: str) -> str:
         """Build default query based on keywords."""
-        if 'counterpart' in question:
+        if 'concentration' in question:
+            return "SELECT * FROM concentration_new LIMIT 20;"
+        elif 'counterpart' in question:
             return "SELECT * FROM counterparty_new LIMIT 20;"
         elif 'trade' in question:
             return "SELECT * FROM trade_new LIMIT 20;"

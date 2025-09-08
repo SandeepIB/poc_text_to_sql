@@ -14,11 +14,11 @@ class OpenAIFineTuner:
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         
     def create_training_dataset(self, schema_info: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Create OpenAI fine-tuning dataset in JSONL format."""
+        """Create OpenAI fine-tuning dataset with complex queries."""
         
         schema_context = self._build_schema_context(schema_info)
         
-        # Training examples in OpenAI format - minimum 10 examples required
+        # Enhanced training examples with complex SQL patterns
         examples = [
             {
                 "messages": [
@@ -87,7 +87,71 @@ class OpenAIFineTuner:
                 "messages": [
                     {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
                     {"role": "user", "content": "What is the total concentration by sector?"},
-                    {"role": "assistant", "content": "SELECT sector, SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_concentration FROM concentration_new WHERE sector IS NOT NULL GROUP BY sector ORDER BY total_concentration DESC;"}
+                    {"role": "assistant", "content": "SELECT reporting_group as sector, SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_concentration FROM concentration_new WHERE reporting_group IS NOT NULL GROUP BY reporting_group ORDER BY total_concentration DESC;"}
+                ]
+            },
+            # Complex aggregation with multiple JOINs
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Show me the top 3 sectors by total notional with their average MPE and trade count"},
+                    {"role": "assistant", "content": "SELECT cp.counterparty_sector, SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional, AVG(CAST(cp.mpe AS DECIMAL(15,2))) as avg_mpe, COUNT(t.id) as trade_count FROM counterparty_new cp JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id WHERE cp.counterparty_sector IS NOT NULL GROUP BY cp.counterparty_sector ORDER BY total_notional DESC LIMIT 3;"}
+                ]
+            },
+            # Complex filtering with subqueries
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Which counterparties have above-average MPE in their sector?"},
+                    {"role": "assistant", "content": "SELECT cp1.counterparty_name, cp1.counterparty_sector, CAST(cp1.mpe AS DECIMAL(15,2)) as mpe_value, sector_avg.avg_sector_mpe FROM counterparty_new cp1 JOIN (SELECT counterparty_sector, AVG(CAST(mpe AS DECIMAL(15,2))) as avg_sector_mpe FROM counterparty_new WHERE counterparty_sector IS NOT NULL GROUP BY counterparty_sector) sector_avg ON cp1.counterparty_sector = sector_avg.counterparty_sector WHERE CAST(cp1.mpe AS DECIMAL(15,2)) > sector_avg.avg_sector_mpe ORDER BY cp1.counterparty_sector, mpe_value DESC;"}
+                ]
+            },
+            # Window functions and ranking
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Rank counterparties by MPE within each sector"},
+                    {"role": "assistant", "content": "SELECT counterparty_name, counterparty_sector, CAST(mpe AS DECIMAL(15,2)) as mpe_value, RANK() OVER (PARTITION BY counterparty_sector ORDER BY CAST(mpe AS DECIMAL(15,2)) DESC) as sector_rank FROM counterparty_new WHERE counterparty_sector IS NOT NULL ORDER BY counterparty_sector, sector_rank;"}
+                ]
+            },
+            # Complex concentration analysis
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Which concentration group shows the lowest aggregate exposure?"},
+                    {"role": "assistant", "content": "SELECT concentration_group, SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_exposure FROM concentration_new WHERE concentration_group IS NOT NULL GROUP BY concentration_group ORDER BY total_exposure ASC LIMIT 1;"}
+                ]
+            },
+            # Multi-table analysis with conditions
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Show counterparties with high MPE and their largest trades"},
+                    {"role": "assistant", "content": "SELECT cp.counterparty_name, CAST(cp.mpe AS DECIMAL(15,2)) as mpe_value, MAX(CAST(t.notional_usd AS DECIMAL(15,2))) as largest_trade, COUNT(t.id) as total_trades FROM counterparty_new cp LEFT JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id WHERE CAST(cp.mpe AS DECIMAL(15,2)) > 1000000 GROUP BY cp.counterparty_id, cp.counterparty_name, cp.mpe ORDER BY mpe_value DESC;"}
+                ]
+            },
+            # Percentage calculations
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "What percentage of total exposure does each sector represent?"},
+                    {"role": "assistant", "content": "SELECT counterparty_sector, SUM(CAST(mpe AS DECIMAL(15,2))) as sector_exposure, ROUND(SUM(CAST(mpe AS DECIMAL(15,2))) * 100.0 / (SELECT SUM(CAST(mpe AS DECIMAL(15,2))) FROM counterparty_new WHERE mpe IS NOT NULL), 2) as percentage FROM counterparty_new WHERE counterparty_sector IS NOT NULL AND mpe IS NOT NULL GROUP BY counterparty_sector ORDER BY sector_exposure DESC;"}
+                ]
+            },
+            # Time-based analysis (if date fields exist)
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Show trade volume by maturity bucket"},
+                    {"role": "assistant", "content": "SELECT maturity_bucket, COUNT(*) as trade_count, SUM(CAST(notional_usd AS DECIMAL(15,2))) as total_notional, AVG(CAST(notional_usd AS DECIMAL(15,2))) as avg_notional FROM trade_new WHERE maturity_bucket IS NOT NULL GROUP BY maturity_bucket ORDER BY total_notional DESC;"}
+                ]
+            },
+            # Risk analysis with multiple conditions
+            {
+                "messages": [
+                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                    {"role": "user", "content": "Identify high-risk counterparties with multiple criteria"},
+                    {"role": "assistant", "content": "SELECT counterparty_name, counterparty_sector, internal_rating, CAST(mpe AS DECIMAL(15,2)) as mpe_value, CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit, CASE WHEN CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) THEN 'BREACH' ELSE 'OK' END as limit_status FROM counterparty_new WHERE (internal_rating IN ('High', 'HIGH') OR CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) OR CAST(mpe AS DECIMAL(15,2)) > 5000000) ORDER BY mpe_value DESC;"}
                 ]
             }
         ]

@@ -57,7 +57,7 @@ Generate ONLY the SQL query, no explanation."""
             model_type = "Fine-tuned" if self.custom_model else "Custom OpenAI"
             print(f"🎯 Using {model_type} ({model}) for query: {question}")
             
-            # For fine-tuned models, use simpler prompt
+            # For fine-tuned models, use minimal prompt since it's already trained
             if self.custom_model:
                 messages = [
                     {"role": "user", "content": question}
@@ -71,20 +71,77 @@ Generate ONLY the SQL query, no explanation."""
             response = self.llm_client.chat.completions.create(
                 model=model,
                 messages=messages,
-                temperature=0.1,
-                max_tokens=300
+                temperature=0.0,  # More deterministic
+                max_tokens=200
             )
             
             content = response.choices[0].message.content.strip()
             
-            # Clean up response
-            if content.startswith('```sql'):
-                content = content[6:-3].strip()
-            elif content.startswith('```'):
-                content = content[3:-3].strip()
+            # Extract SQL from response
+            sql = self._extract_sql(content)
             
-            return content
+            # Validate it looks like SQL
+            if not self._is_valid_sql(sql):
+                print(f"⚠️ Invalid SQL from fine-tuned model: {sql}")
+                return self._generate_with_rules(question)
+            
+            return sql
             
         except Exception as e:
             print(f"⚠️ Custom OpenAI failed: {e}")
             return self._generate_with_rules(question)
+    
+    def _build_schema_context(self) -> str:
+        """Build concise schema context."""
+        context = "Database Schema:\n"
+        for table_name, table_info in self.schema_info.items():
+            context += f"\nTable: {table_name}\n"
+            for col in table_info.columns[:8]:  # Limit columns
+                context += f"  - {col['name']} ({col['type']})\n"
+        return context
+    
+    def _extract_sql(self, content: str) -> str:
+        """Extract SQL from response content."""
+        # Remove code blocks
+        if '```sql' in content:
+            start = content.find('```sql') + 6
+            end = content.find('```', start)
+            if end != -1:
+                return content[start:end].strip()
+        elif '```' in content:
+            start = content.find('```') + 3
+            end = content.find('```', start)
+            if end != -1:
+                return content[start:end].strip()
+        
+        # Look for SELECT statement
+        lines = content.split('\n')
+        sql_lines = []
+        in_sql = False
+        
+        for line in lines:
+            line = line.strip()
+            if line.upper().startswith('SELECT'):
+                in_sql = True
+            if in_sql:
+                sql_lines.append(line)
+                if line.endswith(';'):
+                    break
+        
+        if sql_lines:
+            return '\n'.join(sql_lines)
+        
+        return content.strip()
+    
+    def _is_valid_sql(self, sql: str) -> bool:
+        """Check if response looks like valid SQL."""
+        sql_upper = sql.upper().strip()
+        return (
+            sql_upper.startswith('SELECT') and
+            ('FROM' in sql_upper) and
+            len(sql) > 10 and
+            not any(phrase in sql.lower() for phrase in [
+                'the answer is', 'group c', 'total exposure of', 
+                'lowest aggregate', 'concentration group'
+            ])
+        )
