@@ -14,147 +14,195 @@ class OpenAIFineTuner:
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         
     def create_training_dataset(self, schema_info: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Create OpenAI fine-tuning dataset with complex queries."""
+        """Create generic training dataset based on actual schema."""
         
         schema_context = self._build_schema_context(schema_info)
         
-        # Enhanced training examples with complex SQL patterns
-        examples = [
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which sector has the minimum exposure?"},
-                    {"role": "assistant", "content": "SELECT counterparty_sector, SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure FROM counterparty_new WHERE counterparty_sector IS NOT NULL GROUP BY counterparty_sector ORDER BY total_exposure ASC LIMIT 1;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which sector has the lowest exposure?"},
-                    {"role": "assistant", "content": "SELECT counterparty_sector, SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure FROM counterparty_new WHERE counterparty_sector IS NOT NULL GROUP BY counterparty_sector ORDER BY total_exposure ASC LIMIT 1;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which are the top 5 counterparties by MPE value?"},
-                    {"role": "assistant", "content": "SELECT counterparty_name, counterparty_id, CAST(mpe AS DECIMAL(15,2)) as mpe_value FROM counterparty_new ORDER BY CAST(mpe AS DECIMAL(15,2)) DESC LIMIT 5;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which counterparties have the highest total notional exposure?"},
-                    {"role": "assistant", "content": "SELECT cp.counterparty_name, SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional FROM counterparty_new cp JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id GROUP BY cp.counterparty_id, cp.counterparty_name ORDER BY total_notional DESC LIMIT 20;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "How many trades exist per counterparty?"},
-                    {"role": "assistant", "content": "SELECT cp.counterparty_name, COUNT(t.id) as trade_count FROM counterparty_new cp LEFT JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id GROUP BY cp.counterparty_id, cp.counterparty_name ORDER BY trade_count DESC;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which counterparties have breached their MPE limits?"},
-                    {"role": "assistant", "content": "SELECT counterparty_name, CAST(mpe AS DECIMAL(15,2)) as current_mpe, CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit FROM counterparty_new WHERE CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) ORDER BY current_mpe DESC;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "What is the distribution of counterparties by rating?"},
-                    {"role": "assistant", "content": "SELECT internal_rating, COUNT(*) as count, SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure FROM counterparty_new WHERE internal_rating IS NOT NULL GROUP BY internal_rating ORDER BY total_exposure DESC;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "What is the average trade notional exposure by sector?"},
-                    {"role": "assistant", "content": "SELECT cp.counterparty_sector, AVG(CAST(t.notional_usd AS DECIMAL(15,2))) as avg_notional FROM trade_new t JOIN counterparty_new cp ON t.reporting_counterparty_id = cp.counterparty_id WHERE cp.counterparty_sector IS NOT NULL GROUP BY cp.counterparty_sector ORDER BY avg_notional DESC;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Show me all counterparties with high risk rating"},
-                    {"role": "assistant", "content": "SELECT counterparty_name, internal_rating, CAST(mpe AS DECIMAL(15,2)) as exposure FROM counterparty_new WHERE internal_rating IN ('High', 'HIGH') ORDER BY CAST(mpe AS DECIMAL(15,2)) DESC;"}
-                ]
-            },
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "What is the total concentration by sector?"},
-                    {"role": "assistant", "content": "SELECT reporting_group as sector, SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_concentration FROM concentration_new WHERE reporting_group IS NOT NULL GROUP BY reporting_group ORDER BY total_concentration DESC;"}
-                ]
-            },
-            # Complex aggregation with multiple JOINs
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Show me the top 3 sectors by total notional with their average MPE and trade count"},
-                    {"role": "assistant", "content": "SELECT cp.counterparty_sector, SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional, AVG(CAST(cp.mpe AS DECIMAL(15,2))) as avg_mpe, COUNT(t.id) as trade_count FROM counterparty_new cp JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id WHERE cp.counterparty_sector IS NOT NULL GROUP BY cp.counterparty_sector ORDER BY total_notional DESC LIMIT 3;"}
-                ]
-            },
-            # Complex filtering with subqueries
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which counterparties have above-average MPE in their sector?"},
-                    {"role": "assistant", "content": "SELECT cp1.counterparty_name, cp1.counterparty_sector, CAST(cp1.mpe AS DECIMAL(15,2)) as mpe_value, sector_avg.avg_sector_mpe FROM counterparty_new cp1 JOIN (SELECT counterparty_sector, AVG(CAST(mpe AS DECIMAL(15,2))) as avg_sector_mpe FROM counterparty_new WHERE counterparty_sector IS NOT NULL GROUP BY counterparty_sector) sector_avg ON cp1.counterparty_sector = sector_avg.counterparty_sector WHERE CAST(cp1.mpe AS DECIMAL(15,2)) > sector_avg.avg_sector_mpe ORDER BY cp1.counterparty_sector, mpe_value DESC;"}
-                ]
-            },
-            # Window functions and ranking
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Rank counterparties by MPE within each sector"},
-                    {"role": "assistant", "content": "SELECT counterparty_name, counterparty_sector, CAST(mpe AS DECIMAL(15,2)) as mpe_value, RANK() OVER (PARTITION BY counterparty_sector ORDER BY CAST(mpe AS DECIMAL(15,2)) DESC) as sector_rank FROM counterparty_new WHERE counterparty_sector IS NOT NULL ORDER BY counterparty_sector, sector_rank;"}
-                ]
-            },
-            # Complex concentration analysis
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Which concentration group shows the lowest aggregate exposure?"},
-                    {"role": "assistant", "content": "SELECT concentration_group, SUM(CAST(concentration_value AS DECIMAL(15,2))) as total_exposure FROM concentration_new WHERE concentration_group IS NOT NULL GROUP BY concentration_group ORDER BY total_exposure ASC LIMIT 1;"}
-                ]
-            },
-            # Multi-table analysis with conditions
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Show counterparties with high MPE and their largest trades"},
-                    {"role": "assistant", "content": "SELECT cp.counterparty_name, CAST(cp.mpe AS DECIMAL(15,2)) as mpe_value, MAX(CAST(t.notional_usd AS DECIMAL(15,2))) as largest_trade, COUNT(t.id) as total_trades FROM counterparty_new cp LEFT JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id WHERE CAST(cp.mpe AS DECIMAL(15,2)) > 1000000 GROUP BY cp.counterparty_id, cp.counterparty_name, cp.mpe ORDER BY mpe_value DESC;"}
-                ]
-            },
-            # Percentage calculations
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "What percentage of total exposure does each sector represent?"},
-                    {"role": "assistant", "content": "SELECT counterparty_sector, SUM(CAST(mpe AS DECIMAL(15,2))) as sector_exposure, ROUND(SUM(CAST(mpe AS DECIMAL(15,2))) * 100.0 / (SELECT SUM(CAST(mpe AS DECIMAL(15,2))) FROM counterparty_new WHERE mpe IS NOT NULL), 2) as percentage FROM counterparty_new WHERE counterparty_sector IS NOT NULL AND mpe IS NOT NULL GROUP BY counterparty_sector ORDER BY sector_exposure DESC;"}
-                ]
-            },
-            # Time-based analysis (if date fields exist)
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Show trade volume by maturity bucket"},
-                    {"role": "assistant", "content": "SELECT maturity_bucket, COUNT(*) as trade_count, SUM(CAST(notional_usd AS DECIMAL(15,2))) as total_notional, AVG(CAST(notional_usd AS DECIMAL(15,2))) as avg_notional FROM trade_new WHERE maturity_bucket IS NOT NULL GROUP BY maturity_bucket ORDER BY total_notional DESC;"}
-                ]
-            },
-            # Risk analysis with multiple conditions
-            {
-                "messages": [
-                    {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
-                    {"role": "user", "content": "Identify high-risk counterparties with multiple criteria"},
-                    {"role": "assistant", "content": "SELECT counterparty_name, counterparty_sector, internal_rating, CAST(mpe AS DECIMAL(15,2)) as mpe_value, CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit, CASE WHEN CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) THEN 'BREACH' ELSE 'OK' END as limit_status FROM counterparty_new WHERE (internal_rating IN ('High', 'HIGH') OR CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) OR CAST(mpe AS DECIMAL(15,2)) > 5000000) ORDER BY mpe_value DESC;"}
-                ]
-            }
-        ]
+        # Generate generic training examples based on schema
+        examples = self._generate_generic_examples(schema_info, schema_context)
+        
+        return examples
+    
+    def _generate_generic_examples(self, schema_info: Dict[str, Any], schema_context: str) -> List[Dict[str, Any]]:
+        """Generate generic training examples based on schema analysis."""
+        examples = []
+        
+        # Analyze schema to identify patterns
+        tables = list(schema_info.keys())
+        
+        # Find numeric columns for aggregation
+        numeric_cols = self._find_numeric_columns(schema_info)
+        
+        # Find categorical columns for grouping
+        categorical_cols = self._find_categorical_columns(schema_info)
+        
+        # Find relationship columns for joins
+        join_cols = self._find_join_columns(schema_info)
+        
+        # Generate basic aggregation examples
+        examples.extend(self._generate_aggregation_examples(schema_context, tables, numeric_cols, categorical_cols))
+        
+        # Generate join examples
+        examples.extend(self._generate_join_examples(schema_context, tables, join_cols, numeric_cols))
+        
+        # Generate ranking examples
+        examples.extend(self._generate_ranking_examples(schema_context, tables, numeric_cols, categorical_cols))
+        
+        # Generate filtering examples
+        examples.extend(self._generate_filtering_examples(schema_context, tables, numeric_cols, categorical_cols))
+        
+        return examples
+    
+    def _find_numeric_columns(self, schema_info: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Find numeric columns in each table."""
+        numeric_types = ['DECIMAL', 'NUMERIC', 'FLOAT', 'DOUBLE', 'INT', 'BIGINT', 'SMALLINT']
+        numeric_cols = {}
+        
+        for table_name, table_info in schema_info.items():
+            numeric_cols[table_name] = []
+            for col in table_info.columns:
+                if any(num_type in col['type'].upper() for num_type in numeric_types):
+                    numeric_cols[table_name].append(col['name'])
+        
+        return numeric_cols
+    
+    def _find_categorical_columns(self, schema_info: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Find categorical columns for grouping."""
+        categorical_cols = {}
+        
+        for table_name, table_info in schema_info.items():
+            categorical_cols[table_name] = []
+            for col in table_info.columns:
+                if 'VARCHAR' in col['type'].upper() or 'TEXT' in col['type'].upper():
+                    # Skip ID columns and very long text fields
+                    if not col['name'].lower().endswith('_id') and 'id' not in col['name'].lower():
+                        categorical_cols[table_name].append(col['name'])
+        
+        return categorical_cols
+    
+    def _find_join_columns(self, schema_info: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Find potential join columns (ID fields)."""
+        join_cols = {}
+        
+        for table_name, table_info in schema_info.items():
+            join_cols[table_name] = []
+            for col in table_info.columns:
+                if col['name'].lower().endswith('_id') or col['name'].lower() == 'id':
+                    join_cols[table_name].append(col['name'])
+        
+        return join_cols
+    
+    def _generate_aggregation_examples(self, schema_context: str, tables: List[str], 
+                                     numeric_cols: Dict, categorical_cols: Dict) -> List[Dict]:
+        """Generate aggregation query examples."""
+        examples = []
+        
+        for table in tables:
+            if numeric_cols.get(table) and categorical_cols.get(table):
+                num_col = numeric_cols[table][0]
+                cat_col = categorical_cols[table][0]
+                
+                # Sum aggregation
+                examples.append({
+                    "messages": [
+                        {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                        {"role": "user", "content": f"What is the total {num_col} by {cat_col}?"},
+                        {"role": "assistant", "content": f"SELECT {cat_col}, SUM(CAST({num_col} AS DECIMAL(15,2))) as total_{num_col} FROM {table} WHERE {cat_col} IS NOT NULL GROUP BY {cat_col} ORDER BY total_{num_col} DESC;"}
+                    ]
+                })
+                
+                # Average aggregation
+                examples.append({
+                    "messages": [
+                        {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                        {"role": "user", "content": f"What is the average {num_col} by {cat_col}?"},
+                        {"role": "assistant", "content": f"SELECT {cat_col}, AVG(CAST({num_col} AS DECIMAL(15,2))) as avg_{num_col} FROM {table} WHERE {cat_col} IS NOT NULL GROUP BY {cat_col} ORDER BY avg_{num_col} DESC;"}
+                    ]
+                })
+        
+        return examples
+    
+    def _generate_join_examples(self, schema_context: str, tables: List[str], 
+                              join_cols: Dict, numeric_cols: Dict) -> List[Dict]:
+        """Generate JOIN query examples."""
+        examples = []
+        
+        # Find potential join relationships
+        for table1 in tables:
+            for table2 in tables:
+                if table1 != table2:
+                    # Look for matching ID columns
+                    table1_ids = join_cols.get(table1, [])
+                    table2_ids = join_cols.get(table2, [])
+                    
+                    for id1 in table1_ids:
+                        for id2 in table2_ids:
+                            if id1 == id2 or id1.replace('_id', '') in id2 or id2.replace('_id', '') in id1:
+                                if numeric_cols.get(table2):
+                                    num_col = numeric_cols[table2][0]
+                                    
+                                    examples.append({
+                                        "messages": [
+                                            {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                                            {"role": "user", "content": f"Show total {num_col} for each record in {table1}"},
+                                            {"role": "assistant", "content": f"SELECT t1.*, SUM(CAST(t2.{num_col} AS DECIMAL(15,2))) as total_{num_col} FROM {table1} t1 LEFT JOIN {table2} t2 ON t1.{id1} = t2.{id2} GROUP BY t1.{id1} ORDER BY total_{num_col} DESC;"}
+                                        ]
+                                    })
+                                    break
+                            if len(examples) >= 3:  # Limit join examples
+                                return examples
+        
+        return examples
+    
+    def _generate_ranking_examples(self, schema_context: str, tables: List[str], 
+                                 numeric_cols: Dict, categorical_cols: Dict) -> List[Dict]:
+        """Generate ranking query examples."""
+        examples = []
+        
+        for table in tables:
+            if numeric_cols.get(table) and categorical_cols.get(table):
+                num_col = numeric_cols[table][0]
+                cat_col = categorical_cols[table][0]
+                
+                # Top N query
+                examples.append({
+                    "messages": [
+                        {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                        {"role": "user", "content": f"Show top 5 records by {num_col}"},
+                        {"role": "assistant", "content": f"SELECT *, CAST({num_col} AS DECIMAL(15,2)) as {num_col}_value FROM {table} ORDER BY CAST({num_col} AS DECIMAL(15,2)) DESC LIMIT 5;"}
+                    ]
+                })
+                
+                # Window function ranking
+                examples.append({
+                    "messages": [
+                        {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                        {"role": "user", "content": f"Rank records by {num_col} within each {cat_col}"},
+                        {"role": "assistant", "content": f"SELECT *, CAST({num_col} AS DECIMAL(15,2)) as {num_col}_value, RANK() OVER (PARTITION BY {cat_col} ORDER BY CAST({num_col} AS DECIMAL(15,2)) DESC) as rank_in_{cat_col} FROM {table} WHERE {cat_col} IS NOT NULL ORDER BY {cat_col}, rank_in_{cat_col};"}
+                    ]
+                })
+                break  # Limit to one table
+        
+        return examples
+    
+    def _generate_filtering_examples(self, schema_context: str, tables: List[str], 
+                                   numeric_cols: Dict, categorical_cols: Dict) -> List[Dict]:
+        """Generate filtering query examples."""
+        examples = []
+        
+        for table in tables:
+            if numeric_cols.get(table):
+                num_col = numeric_cols[table][0]
+                
+                # Threshold filtering
+                examples.append({
+                    "messages": [
+                        {"role": "system", "content": f"You are a SQL expert. Generate accurate SQL queries based on this database schema:\n\n{schema_context}"},
+                        {"role": "user", "content": f"Show records with high {num_col} values"},
+                        {"role": "assistant", "content": f"SELECT * FROM {table} WHERE CAST({num_col} AS DECIMAL(15,2)) > (SELECT AVG(CAST({num_col} AS DECIMAL(15,2))) FROM {table} WHERE {num_col} IS NOT NULL) ORDER BY CAST({num_col} AS DECIMAL(15,2)) DESC;"}
+                    ]
+                })
+                break  # Limit to one example
         
         return examples
     
@@ -166,11 +214,6 @@ class OpenAIFineTuner:
             context += f"\nTable: {table_name}\n"
             for col in table_info.columns:
                 context += f"  - {col['name']} ({col['type']})\n"
-        
-        context += "\nRules:\n"
-        context += "- Use counterparty_sector from counterparty_new for sector queries\n"
-        context += "- Use CAST(mpe AS DECIMAL(15,2)) for MPE calculations\n"
-        context += "- Join: counterparty_new.counterparty_id = trade_new.reporting_counterparty_id\n"
         
         return context
     
@@ -213,9 +256,9 @@ class OpenAIFineTuner:
             training_file=file_id,
             model=model,
             hyperparameters={
-                "n_epochs": 1,  # Reduced epochs
-                "batch_size": "auto",  # Let OpenAI choose
-                "learning_rate_multiplier": "auto"  # Let OpenAI choose
+                "n_epochs": 1,
+                "batch_size": "auto",
+                "learning_rate_multiplier": "auto"
             }
         )
         
@@ -236,10 +279,6 @@ class OpenAIFineTuner:
         # Show error details if failed
         if status == 'failed' and hasattr(response, 'error'):
             print(f"❌ Error: {response.error}")
-        
-        # Show validation results if available
-        if hasattr(response, 'result_files') and response.result_files:
-            print(f"📋 Result files: {response.result_files}")
         
         return {
             "status": status,
