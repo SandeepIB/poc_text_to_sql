@@ -3,7 +3,7 @@
 import os
 from typing import Dict, Any, Optional, Tuple
 from .custom_openai_generator import CustomOpenAIGenerator
-from .enhanced_llm_generator import EnhancedLLMGenerator
+from .llm_generator import LLMSQLGenerator
 from .pattern_generator import PatternSQLGenerator
 from ..core.llm_client import LLMClientFactory, LLMConfig
 
@@ -83,7 +83,7 @@ class GeneratorFactory:
         
         elif generator_type == "local":
             if self._local_client:
-                return EnhancedLLMGenerator(self.schema_info, self._local_client), "Local LLM (Enhanced)"
+                return LLMSQLGenerator(self.schema_info, self._local_client), "Local LLM"
             else:
                 print("Local LLM not available, falling back to rule-based")
                 return PatternSQLGenerator(self.schema_info), "Rule-based (Local LLM unavailable)"
@@ -112,7 +112,7 @@ class GeneratorFactory:
             elif self._openai_client:
                 return CustomOpenAIGenerator(self.schema_info, self._openai_client), "OpenAI GPT (Auto)"
             elif self._local_client:
-                return EnhancedLLMGenerator(self.schema_info, self._local_client), "Local LLM (Auto)"
+                return LLMSQLGenerator(self.schema_info, self._local_client), "Local LLM (Auto)"
             else:
                 return PatternSQLGenerator(self.schema_info), "Rule-based (Auto)"
         

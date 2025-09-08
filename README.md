@@ -58,13 +58,11 @@ text_to_sql_system/
 │   ├── 📁 generators/           # SQL generators (Strategy Pattern)
 │   │   ├── base.py              # Base generator interface
 │   │   ├── pattern_generator.py # Rule-based generator
-│   │   ├── nlp_generator.py     # NLP-enhanced generator
 │   │   ├── llm_generator.py     # LLM-powered generator
 │   │   ├── custom_openai_generator.py # Custom OpenAI generator
 │   │   └── generator_factory.py # Factory for creating generators
 │   ├── 📁 training/             # Training & Fine-tuning
 │   │   ├── data_generator.py    # Generate training data
-│   │   ├── model_trainer.py     # Model training
 │   │   └── openai_fine_tuner.py # OpenAI fine-tuning
 │   └── 📁 api/                  # API components
 │       ├── models.py            # Pydantic models
@@ -74,14 +72,20 @@ text_to_sql_system/
 │   ├── generate_training_data.py # Generate training data
 │   ├── fine_tune_openai.py      # Fine-tune OpenAI model
 │   ├── monitor_finetune.py      # Monitor fine-tuning progress
-│   └── test_llm.py              # Test LLM generation
+│   ├── check_finetune_status.py # Check fine-tuning status
+│   ├── setup_local_llm.py       # Setup local LLM
+│   ├── fine_tune_local_llm.py   # Fine-tune local LLM
+│   ├── test_llm.py              # Test LLM generation
+│   └── test_custom_option.py    # Test custom model option
 ├── 📁 data/                     # Data storage
 │   ├── training_data.json       # Generated training data
 │   ├── schema_info.json         # Database schema
-│   └── openai_training.jsonl    # OpenAI training format
+│   └── openai_training_fixed.jsonl # OpenAI training format
 ├── 📁 tests/                    # Unit tests
+├── 📁 docs/                     # Documentation
+├── 📁 examples/                 # Usage examples
 ├── 📁 configs/                  # Configuration files
-├── 📁 logs/                     # Application logs
+├── 📁 docker/                   # Docker configuration
 ├── app.py                       # Application entry point
 ├── requirements.txt             # Dependencies
 └── README.md                    # This file

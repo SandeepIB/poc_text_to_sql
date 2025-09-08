@@ -145,18 +145,21 @@ def example_training_data():
     schema_info = db_manager.extract_schema()
     
     # Generate training data
-    generator = TrainingDataGenerator(schema_info)
-    training_data = generator.generate_training_data()
-    
-    print(f"📊 Generated {len(training_data)} training examples")
-    
-    # Show sample
-    if training_data:
-        sample = training_data[0]
-        print(f"\n📝 Sample Training Example:")
-        print(f"   Question: {sample['question']}")
-        print(f"   SQL: {sample['sql'][:100]}...")
-        print(f"   Pattern: {sample.get('pattern_type', 'N/A')}")
+    try:
+        generator = TrainingDataGenerator(schema_info)
+        training_data = generator.generate_training_data()
+        
+        print(f"📊 Generated {len(training_data)} training examples")
+        
+        # Show sample
+        if training_data:
+            sample = training_data[0]
+            print(f"\n📝 Sample Training Example:")
+            print(f"   Question: {sample['question']}")
+            print(f"   SQL: {sample['sql'][:100]}...")
+            print(f"   Pattern: {sample.get('pattern_type', 'N/A')}")
+    except Exception as e:
+        print(f"⚠️ Training data generation not available: {e}")
 
 
 if __name__ == "__main__":
