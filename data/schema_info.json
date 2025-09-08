@@ -1,0 +1,1863 @@
+{
+  "concentration_new": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT",
+        "nullable": false,
+        "default": null,
+        "comment": null
+      },
+      {
+        "name": "column_name",
+        "type": "VARCHAR(13)",
+        "nullable": true,
+        "default": null,
+        "comment": "Primary key"
+      },
+      {
+        "name": "as_of_date",
+        "type": "VARCHAR(19)",
+        "nullable": true,
+        "default": null,
+        "comment": "Description"
+      },
+      {
+        "name": "entity",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date on which the concentration snapshot was taken."
+      },
+      {
+        "name": "reporting_group",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "The internal business unit or division reporting the concentration data."
+      },
+      {
+        "name": "concentration_group",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Group or category used for reporting purposes."
+      },
+      {
+        "name": "concentration_value",
+        "type": "VARCHAR(9)",
+        "nullable": true,
+        "default": null,
+        "comment": "The type of concentration being measured (e.g., Country, Rating, Sector)."
+      },
+      {
+        "name": "mpe",
+        "type": "VARCHAR(9)",
+        "nullable": true,
+        "default": null,
+        "comment": "The specific value within the concentration group"
+      },
+      {
+        "name": "counterparty_count",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum Potential Exposure value for the concentration group."
+      }
+    ],
+    "foreign_keys": [
+      {
+        "name": "fk_concentration_new_entity",
+        "constrained_columns": [
+          "entity"
+        ],
+        "referred_table": "counterparty_new",
+        "referred_columns": [
+          "entity"
+        ]
+      }
+    ],
+    "sample_data": [
+      {
+        "id": 486,
+        "column_name": "Conc_486",
+        "as_of_date": "2024-10-01 17:32:53",
+        "entity": "TSE",
+        "reporting_group": "Group_2",
+        "concentration_group": "Country",
+        "concentration_value": "JP",
+        "mpe": "570549223",
+        "counterparty_count": "9"
+      },
+      {
+        "id": 487,
+        "column_name": "Conc_487",
+        "as_of_date": "2024-09-27 17:32:53",
+        "entity": "TSE",
+        "reporting_group": "Group_2",
+        "concentration_group": "Rating",
+        "concentration_value": "BBB",
+        "mpe": "647746618",
+        "counterparty_count": "7"
+      },
+      {
+        "id": 488,
+        "column_name": "Conc_488",
+        "as_of_date": "2024-10-05 17:32:53",
+        "entity": "TSE",
+        "reporting_group": "Group_2",
+        "concentration_group": "Sector",
+        "concentration_value": "Energy",
+        "mpe": "567216582",
+        "counterparty_count": "7"
+      }
+    ]
+  },
+  "counterparty_new": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT",
+        "nullable": false,
+        "default": null,
+        "comment": null
+      },
+      {
+        "name": "column_name",
+        "type": "VARCHAR(13)",
+        "nullable": true,
+        "default": null,
+        "comment": "Primary key"
+      },
+      {
+        "name": "as_of_date",
+        "type": "VARCHAR(19)",
+        "nullable": true,
+        "default": null,
+        "comment": "Description"
+      },
+      {
+        "name": "entity",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date on which the data snapshot was taken."
+      },
+      {
+        "name": "reporting_group",
+        "type": "VARCHAR(24)",
+        "nullable": true,
+        "default": null,
+        "comment": "The entity under which trades are booked."
+      },
+      {
+        "name": "counterparty_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Group used for reporting and aggregation."
+      },
+      {
+        "name": "counterparty_name",
+        "type": "VARCHAR(13)",
+        "nullable": true,
+        "default": null,
+        "comment": "Unique identifier for the counterparty."
+      },
+      {
+        "name": "ccp_name",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Name of the counterparty."
+      },
+      {
+        "name": "fcm_name",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Name of the Central Counterparty clearing the trade."
+      },
+      {
+        "name": "ccp_flag",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Futures Commission Merchant involved in the trade."
+      },
+      {
+        "name": "internal_rating",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates if the trade is cleared via a CCP (Yes/No)."
+      },
+      {
+        "name": "product_type",
+        "type": "VARCHAR(11)",
+        "nullable": true,
+        "default": null,
+        "comment": "Internal credit rating assigned to the counterparty."
+      },
+      {
+        "name": "_of_ir_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Type of financial product involved in the trades (e.g., derivatives, SFTs)."
+      },
+      {
+        "name": "_of_fx_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of interest rate trades executed."
+      },
+      {
+        "name": "_of_cds_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of foreign exchange trades executed."
+      },
+      {
+        "name": "_of_cmdty_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of credit default swap trades executed."
+      },
+      {
+        "name": "_of_eq_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of commodity trades executed."
+      },
+      {
+        "name": "_of_repo_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of equity trades executed."
+      },
+      {
+        "name": "_of_rev_repo_trades",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of repurchase agreement trades executed."
+      },
+      {
+        "name": "_of_options",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of reverse repurchase agreement trades executed."
+      },
+      {
+        "name": "_of_future",
+        "type": "VARCHAR(1)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of option trades executed."
+      },
+      {
+        "name": "closeout_netting_flag",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of futures trades executed."
+      },
+      {
+        "name": "batch_mtm",
+        "type": "VARCHAR(11)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates whether closeout netting applies to the trades (Yes/No)."
+      },
+      {
+        "name": "ce",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Mark-to-market value calculated in batch processing."
+      },
+      {
+        "name": "ce_im_vm",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure value for the counterparty."
+      },
+      {
+        "name": "mpe",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined exposure excluding initial and variation margin received."
+      },
+      {
+        "name": "mpe_limit",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under normal conditions."
+      },
+      {
+        "name": "epe",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Limit set for maximum potential exposure."
+      },
+      {
+        "name": "epe_limit",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure based on trade valuation."
+      },
+      {
+        "name": "repo_notional",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Limit set for expected positive exposure."
+      },
+      {
+        "name": "repo_notional_limit",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Total notional amount of repo trades."
+      },
+      {
+        "name": "rev_repo_notional",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum allowed notional for repo trades."
+      },
+      {
+        "name": "rev_repo_notional_limit",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Total notional amount of reverse repo trades."
+      },
+      {
+        "name": "stressed_mpe_scenario1",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum allowed notional for reverse repo trades."
+      },
+      {
+        "name": "stressed_mpe_scenario2",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 1"
+      },
+      {
+        "name": "stressed_mpe_scenario3",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 2"
+      },
+      {
+        "name": "stressed_mpe_scenario4",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 3"
+      },
+      {
+        "name": "stressed_mpe_scenario5",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 4"
+      },
+      {
+        "name": "stressed_mpe_scenario6",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 5"
+      },
+      {
+        "name": "stressed_mpe_scenario7",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 6"
+      },
+      {
+        "name": "stressed_mpe_scenario8",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 7"
+      },
+      {
+        "name": "stressed_mpe_scenario9",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 8"
+      },
+      {
+        "name": "stressed_mpe_scenario10",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 9"
+      },
+      {
+        "name": "stressed_epe_scenario10",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure under stress scenario 10"
+      },
+      {
+        "name": "stressed_epe_scenario1",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 10"
+      },
+      {
+        "name": "stressed_epe_scenario2",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 1"
+      },
+      {
+        "name": "stressed_epe_scenario3",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 2"
+      },
+      {
+        "name": "stressed_epe_scenario4",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 3"
+      },
+      {
+        "name": "stressed_epe_scenario5",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 4"
+      },
+      {
+        "name": "stressed_epe_scenario6",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 5"
+      },
+      {
+        "name": "stressed_epe_scenario7",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 6"
+      },
+      {
+        "name": "stressed_epe_scenario8",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 7"
+      },
+      {
+        "name": "stressed_epe_scenario9",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 8"
+      },
+      {
+        "name": "stressed_ce_scenario10",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Expected positive exposure under stress scenario 9"
+      },
+      {
+        "name": "stressed_ce_scenario1",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 10"
+      },
+      {
+        "name": "stressed_ce_scenario2",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 1"
+      },
+      {
+        "name": "stressed_ce_scenario3",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 2"
+      },
+      {
+        "name": "stressed_ce_scenario4",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 3"
+      },
+      {
+        "name": "stressed_ce_scenario5",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 4"
+      },
+      {
+        "name": "stressed_ce_scenario6",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 5"
+      },
+      {
+        "name": "stressed_ce_scenario7",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 6"
+      },
+      {
+        "name": "stressed_ce_scenario8",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 7"
+      },
+      {
+        "name": "stressed_ce_scenario9",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 8"
+      },
+      {
+        "name": "_of_new_trades",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Current exposure under stress scenario 9"
+      },
+      {
+        "name": "_of_expired_trades",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Count of newly executed trades during the reporting period."
+      },
+      {
+        "name": "new_counterparty_flag",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Count of trades that expired during the reporting period."
+      },
+      {
+        "name": "active_mpe_limit",
+        "type": "VARCHAR(9)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates whether the counterparty is newly onboarded (Yes/No)."
+      },
+      {
+        "name": "active_epe_limit",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Active limit set for maximum potential exposure."
+      },
+      {
+        "name": "facility_id",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Active limit set for expected positive exposure."
+      },
+      {
+        "name": "buffer",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Identifier for the financial facility associated with the trades."
+      },
+      {
+        "name": "internal_entity",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Additional buffer amount for risk mitigation."
+      },
+      {
+        "name": "revolver_status",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Internal business unit managing the trade."
+      },
+      {
+        "name": "tenor_month",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Status of the revolver facility (e.g., Approved, Pending)."
+      },
+      {
+        "name": "revolver_single_line",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Duration of the trade in months."
+      },
+      {
+        "name": "settlement_limit",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates if the facility is revolving or single draw."
+      },
+      {
+        "name": "counterparty_country",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum settlement amount allowed for the trade."
+      },
+      {
+        "name": "counterparty_sector",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Country of the counterparty."
+      },
+      {
+        "name": "ultimate_parent_sun_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Industry sector of the counterparty."
+      },
+      {
+        "name": "ultimate_parent_name",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "System ID of the ultimate parent entity."
+      },
+      {
+        "name": "ultimate_parent_country",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Name of the ultimate parent entity."
+      },
+      {
+        "name": "ultimate_parent_sector",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Country of the ultimate parent entity."
+      },
+      {
+        "name": "dv01",
+        "type": "VARCHAR(9)",
+        "nullable": true,
+        "default": null,
+        "comment": "Industry sector of the ultimate parent entity."
+      },
+      {
+        "name": "dv01_by_ir_curve1",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Dollar value change for a 1 basis point move in interest rates."
+      },
+      {
+        "name": "dv01_by_ir_curve2",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 1."
+      },
+      {
+        "name": "dv01_by_ir_curve3",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 2."
+      },
+      {
+        "name": "dv01_by_ir_curve4",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 3."
+      },
+      {
+        "name": "dv01_by_ir_curve5",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 4."
+      },
+      {
+        "name": "dv01_by_ir_curve6",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 5."
+      },
+      {
+        "name": "fx01",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "DV01 sensitivity for interest rate curve 6."
+      },
+      {
+        "name": "fx01_by_ir_curve1",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Foreign exchange sensitivity to currency movements."
+      },
+      {
+        "name": "fx01_by_ir_curve2",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "FX01 sensitivity for interest rate curve 1."
+      },
+      {
+        "name": "fx01_by_ir_curve3",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "FX01 sensitivity for interest rate curve 2."
+      },
+      {
+        "name": "fx01_by_ir_curve4",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "FX01 sensitivity for interest rate curve 3."
+      },
+      {
+        "name": "fx01_by_ir_curve5",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "FX01 sensitivity for interest rate curve 4."
+      },
+      {
+        "name": "vega",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "FX01 sensitivity for interest rate curve 5."
+      },
+      {
+        "name": "internal_entities",
+        "type": "VARCHAR(11)",
+        "nullable": true,
+        "default": null,
+        "comment": "Sensitivity to changes in volatility (VEGA)."
+      },
+      {
+        "name": "_of_new_trades_monthly",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Internal entities involved in the trades."
+      },
+      {
+        "name": "_of_expired_trades_monthly",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of new trades executed in the current month."
+      },
+      {
+        "name": "base_mtm",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Number of trades expired in the current month."
+      },
+      {
+        "name": "sb_notional",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Base mark-to-market value of the portfolio."
+      },
+      {
+        "name": "sl_notional",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stock borrower notional amount."
+      },
+      {
+        "name": "sb_notional_limit",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stock Lending notional amount."
+      },
+      {
+        "name": "sl_notional_limit",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Limit for stock borrower notional."
+      },
+      {
+        "name": "notional",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Limit for stock lending notional."
+      },
+      {
+        "name": "agent_sun_id",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Total notional amount across all trades."
+      },
+      {
+        "name": "trader_books",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "System identifier for the agent involved in the trade."
+      },
+      {
+        "name": "counterparty_industry",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Trading books associated with the trades."
+      },
+      {
+        "name": "sb_credit_limit",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Industry classification of the counterparty."
+      },
+      {
+        "name": "sl_credit_limit",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Credit limit for stock borrower trades."
+      },
+      {
+        "name": "non_ig_notional",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Credit limit for stock lending trades."
+      },
+      {
+        "name": "counterparty_type",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "Notional amount for non-investment grade trades."
+      },
+      {
+        "name": "stressed_mtm_scenario1",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Classification of the counterparty (e.g., Hedge Fund, Bank)."
+      },
+      {
+        "name": "stressed_mtm_scenario2",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 1"
+      },
+      {
+        "name": "stressed_mtm_scenario3",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 2"
+      },
+      {
+        "name": "stressed_mtm_scenario4",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 3"
+      },
+      {
+        "name": "stressed_mtm_scenario5",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 4"
+      },
+      {
+        "name": "stressed_mtm_scenario6",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 5"
+      },
+      {
+        "name": "stressed_mtm_scenario7",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 6"
+      },
+      {
+        "name": "stressed_mtm_scenario8",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 7"
+      },
+      {
+        "name": "stressed_mtm_scenario9",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 8"
+      },
+      {
+        "name": "stressed_mtm_scenario10",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 9"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario1",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Stressed mark-to-market values under scenario 10"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario2",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 1"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario3",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 2"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario4",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 3"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario5",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 4"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario6",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 5"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario7",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 6"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario8",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 7"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario9",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 8"
+      },
+      {
+        "name": "stressed_ce_im_vm_scenario10",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Combined stressed exposure exluding IM and VM received values under scenario 9"
+      }
+    ],
+    "foreign_keys": [],
+    "sample_data": [
+      {
+        "id": 213,
+        "column_name": "CP_1",
+        "as_of_date": "2024-09-26 17:32:53",
+        "entity": "TSE",
+        "reporting_group": "Trading_Group_1",
+        "counterparty_id": "1000",
+        "counterparty_name": "TSE_C1",
+        "ccp_name": "CME",
+        "fcm_name": "FCM3",
+        "ccp_flag": "Yes",
+        "internal_rating": "BB",
+        "product_type": "Options",
+        "_of_ir_trades": "5",
+        "_of_fx_trades": "4",
+        "_of_cds_trades": "7",
+        "_of_cmdty_trades": "8",
+        "_of_eq_trades": "6",
+        "_of_repo_trades": "7",
+        "_of_rev_repo_trades": "2",
+        "_of_options": "4",
+        "_of_future": "5",
+        "closeout_netting_flag": "Yes",
+        "batch_mtm": "29459248301",
+        "ce": "72199",
+        "ce_im_vm": "494640",
+        "mpe": "20619093",
+        "mpe_limit": "8160318",
+        "epe": "53844",
+        "epe_limit": "681002",
+        "repo_notional": "91133",
+        "repo_notional_limit": "367169",
+        "rev_repo_notional": "96335",
+        "rev_repo_notional_limit": "44588",
+        "stressed_mpe_scenario1": "8147",
+        "stressed_mpe_scenario2": "5359",
+        "stressed_mpe_scenario3": "889",
+        "stressed_mpe_scenario4": "783",
+        "stressed_mpe_scenario5": "847",
+        "stressed_mpe_scenario6": "990",
+        "stressed_mpe_scenario7": "58113",
+        "stressed_mpe_scenario8": "56",
+        "stressed_mpe_scenario9": "694",
+        "stressed_mpe_scenario10": "5104",
+        "stressed_epe_scenario10": "46867",
+        "stressed_epe_scenario1": "97294",
+        "stressed_epe_scenario2": "6535",
+        "stressed_epe_scenario3": "8880",
+        "stressed_epe_scenario4": "7105",
+        "stressed_epe_scenario5": "8321",
+        "stressed_epe_scenario6": "763",
+        "stressed_epe_scenario7": "6132",
+        "stressed_epe_scenario8": "61618",
+        "stressed_epe_scenario9": "66252",
+        "stressed_ce_scenario10": "853",
+        "stressed_ce_scenario1": "611",
+        "stressed_ce_scenario2": "5503",
+        "stressed_ce_scenario3": "9491",
+        "stressed_ce_scenario4": "5181",
+        "stressed_ce_scenario5": "8215",
+        "stressed_ce_scenario6": "500",
+        "stressed_ce_scenario7": "5203",
+        "stressed_ce_scenario8": "7498",
+        "stressed_ce_scenario9": "7738263",
+        "_of_new_trades": "803",
+        "_of_expired_trades": "85866",
+        "new_counterparty_flag": "Yes",
+        "active_mpe_limit": "787656043",
+        "active_epe_limit": "844472",
+        "facility_id": "FAC_1000",
+        "buffer": "78",
+        "internal_entity": "TSE",
+        "revolver_status": "Active",
+        "tenor_month": "29",
+        "revolver_single_line": "RSL_213",
+        "settlement_limit": null,
+        "counterparty_country": "HK",
+        "counterparty_sector": "Energy",
+        "ultimate_parent_sun_id": "689839",
+        "ultimate_parent_name": "TSEP",
+        "ultimate_parent_country": "FR",
+        "ultimate_parent_sector": "Tech",
+        "dv01": "-33821",
+        "dv01_by_ir_curve1": "545",
+        "dv01_by_ir_curve2": "-1856",
+        "dv01_by_ir_curve3": "-420",
+        "dv01_by_ir_curve4": "272",
+        "dv01_by_ir_curve5": "50",
+        "dv01_by_ir_curve6": "-418",
+        "fx01": "326",
+        "fx01_by_ir_curve1": "15854",
+        "fx01_by_ir_curve2": "3856",
+        "fx01_by_ir_curve3": "352",
+        "fx01_by_ir_curve4": "575",
+        "fx01_by_ir_curve5": "-230",
+        "vega": "367",
+        "internal_entities": "TSE",
+        "_of_new_trades_monthly": "29",
+        "_of_expired_trades_monthly": "27",
+        "base_mtm": "-483",
+        "sb_notional": "9880",
+        "sl_notional": "6565",
+        "sb_notional_limit": "8833",
+        "sl_notional_limit": "9692",
+        "notional": "78019",
+        "agent_sun_id": "80310",
+        "trader_books": "TSEB",
+        "counterparty_industry": "Insur",
+        "sb_credit_limit": "3293",
+        "sl_credit_limit": "8706",
+        "non_ig_notional": "6232",
+        "counterparty_type": "Sov",
+        "stressed_mtm_scenario1": "39434",
+        "stressed_mtm_scenario2": "-3236",
+        "stressed_mtm_scenario3": "46509",
+        "stressed_mtm_scenario4": "-3299",
+        "stressed_mtm_scenario5": "33892",
+        "stressed_mtm_scenario6": "30687",
+        "stressed_mtm_scenario7": "-4295",
+        "stressed_mtm_scenario8": "-3444",
+        "stressed_mtm_scenario9": "38703",
+        "stressed_mtm_scenario10": "14768",
+        "stressed_ce_im_vm_scenario1": "26818",
+        "stressed_ce_im_vm_scenario2": "56912",
+        "stressed_ce_im_vm_scenario3": "29284",
+        "stressed_ce_im_vm_scenario4": "28620",
+        "stressed_ce_im_vm_scenario5": "67493",
+        "stressed_ce_im_vm_scenario6": "38457",
+        "stressed_ce_im_vm_scenario7": "55704",
+        "stressed_ce_im_vm_scenario8": "37511",
+        "stressed_ce_im_vm_scenario9": "88546",
+        "stressed_ce_im_vm_scenario10": "13867"
+      },
+      {
+        "id": 214,
+        "column_name": "CP_2",
+        "as_of_date": "2023-12-30 17:32:53",
+        "entity": "TSE",
+        "reporting_group": "Trading_Group_2",
+        "counterparty_id": "1001",
+        "counterparty_name": "TSE_C2",
+        "ccp_name": "ICE",
+        "fcm_name": "FCM1",
+        "ccp_flag": "Yes",
+        "internal_rating": "A",
+        "product_type": "Derivatives",
+        "_of_ir_trades": "8",
+        "_of_fx_trades": "1",
+        "_of_cds_trades": "3",
+        "_of_cmdty_trades": "2",
+        "_of_eq_trades": "7",
+        "_of_repo_trades": "9",
+        "_of_rev_repo_trades": "1",
+        "_of_options": "8",
+        "_of_future": "8",
+        "closeout_netting_flag": "No",
+        "batch_mtm": "55949103251",
+        "ce": "86081",
+        "ce_im_vm": "786729",
+        "mpe": "15795784",
+        "mpe_limit": "5724203",
+        "epe": "72697",
+        "epe_limit": "432714",
+        "repo_notional": "68988",
+        "repo_notional_limit": "466762",
+        "rev_repo_notional": "64879",
+        "rev_repo_notional_limit": "98321",
+        "stressed_mpe_scenario1": "3629",
+        "stressed_mpe_scenario2": "8691",
+        "stressed_mpe_scenario3": "895",
+        "stressed_mpe_scenario4": "890",
+        "stressed_mpe_scenario5": "995",
+        "stressed_mpe_scenario6": "834",
+        "stressed_mpe_scenario7": "99733",
+        "stressed_mpe_scenario8": "62",
+        "stressed_mpe_scenario9": "526",
+        "stressed_mpe_scenario10": "3250",
+        "stressed_epe_scenario10": "89154",
+        "stressed_epe_scenario1": "43335",
+        "stressed_epe_scenario2": "6661",
+        "stressed_epe_scenario3": "4093",
+        "stressed_epe_scenario4": "8102",
+        "stressed_epe_scenario5": "8802",
+        "stressed_epe_scenario6": "554",
+        "stressed_epe_scenario7": "8523",
+        "stressed_epe_scenario8": "70610",
+        "stressed_epe_scenario9": "67210",
+        "stressed_ce_scenario10": "582",
+        "stressed_ce_scenario1": "802",
+        "stressed_ce_scenario2": "8160",
+        "stressed_ce_scenario3": "8728",
+        "stressed_ce_scenario4": "9972",
+        "stressed_ce_scenario5": "4655",
+        "stressed_ce_scenario6": "523",
+        "stressed_ce_scenario7": "7306",
+        "stressed_ce_scenario8": "7299",
+        "stressed_ce_scenario9": "9303443",
+        "_of_new_trades": "1688",
+        "_of_expired_trades": "40317",
+        "new_counterparty_flag": "No",
+        "active_mpe_limit": "609606514",
+        "active_epe_limit": "855244",
+        "facility_id": "FAC_1001",
+        "buffer": "272",
+        "internal_entity": "TSE",
+        "revolver_status": "Approved",
+        "tenor_month": "68",
+        "revolver_single_line": "RSL_214",
+        "settlement_limit": null,
+        "counterparty_country": "HK",
+        "counterparty_sector": "Finance",
+        "ultimate_parent_sun_id": "947057",
+        "ultimate_parent_name": "TSEP",
+        "ultimate_parent_country": "JP",
+        "ultimate_parent_sector": "Energy",
+        "dv01": "32152",
+        "dv01_by_ir_curve1": "-457",
+        "dv01_by_ir_curve2": "2464",
+        "dv01_by_ir_curve3": "-120",
+        "dv01_by_ir_curve4": "259",
+        "dv01_by_ir_curve5": "285",
+        "dv01_by_ir_curve6": "-454",
+        "fx01": "-44",
+        "fx01_by_ir_curve1": "-1439",
+        "fx01_by_ir_curve2": "-343",
+        "fx01_by_ir_curve3": "-84",
+        "fx01_by_ir_curve4": "-122",
+        "fx01_by_ir_curve5": "-224",
+        "vega": "422",
+        "internal_entities": "TSE",
+        "_of_new_trades_monthly": "29",
+        "_of_expired_trades_monthly": "18",
+        "base_mtm": "-969",
+        "sb_notional": "7304",
+        "sl_notional": "5374",
+        "sb_notional_limit": "9055",
+        "sl_notional_limit": "8677",
+        "notional": "82861",
+        "agent_sun_id": "89996",
+        "trader_books": "TSEB",
+        "counterparty_industry": "Banking",
+        "sb_credit_limit": "8529",
+        "sl_credit_limit": "2436",
+        "non_ig_notional": "5921",
+        "counterparty_type": "Corp",
+        "stressed_mtm_scenario1": "48236",
+        "stressed_mtm_scenario2": "-1287",
+        "stressed_mtm_scenario3": "-4722",
+        "stressed_mtm_scenario4": "126",
+        "stressed_mtm_scenario5": "-2403",
+        "stressed_mtm_scenario6": "9234",
+        "stressed_mtm_scenario7": "-8849",
+        "stressed_mtm_scenario8": "-5932",
+        "stressed_mtm_scenario9": "-4302",
+        "stressed_mtm_scenario10": "47768",
+        "stressed_ce_im_vm_scenario1": "36137",
+        "stressed_ce_im_vm_scenario2": "18269",
+        "stressed_ce_im_vm_scenario3": "39178",
+        "stressed_ce_im_vm_scenario4": "10750",
+        "stressed_ce_im_vm_scenario5": "22285",
+        "stressed_ce_im_vm_scenario6": "93484",
+        "stressed_ce_im_vm_scenario7": "23286",
+        "stressed_ce_im_vm_scenario8": "90747",
+        "stressed_ce_im_vm_scenario9": "80326",
+        "stressed_ce_im_vm_scenario10": "56528"
+      },
+      {
+        "id": 215,
+        "column_name": "CP_3",
+        "as_of_date": "2023-12-22 17:32:53",
+        "entity": "NASDAQ",
+        "reporting_group": "Trading_Group_3",
+        "counterparty_id": "1002",
+        "counterparty_name": "NASDAQ_C3",
+        "ccp_name": "ICE",
+        "fcm_name": "FCM2",
+        "ccp_flag": "Yes",
+        "internal_rating": "AA",
+        "product_type": "SFTs",
+        "_of_ir_trades": "3",
+        "_of_fx_trades": "2",
+        "_of_cds_trades": "3",
+        "_of_cmdty_trades": "9",
+        "_of_eq_trades": "9",
+        "_of_repo_trades": "9",
+        "_of_rev_repo_trades": "6",
+        "_of_options": "9",
+        "_of_future": "5",
+        "closeout_netting_flag": "No",
+        "batch_mtm": "83645765599",
+        "ce": "56189",
+        "ce_im_vm": "570009",
+        "mpe": "77020139",
+        "mpe_limit": "8885359",
+        "epe": "77381",
+        "epe_limit": "583643",
+        "repo_notional": "72426",
+        "repo_notional_limit": "256550",
+        "rev_repo_notional": "21449",
+        "rev_repo_notional_limit": "44869",
+        "stressed_mpe_scenario1": "9757",
+        "stressed_mpe_scenario2": "9881",
+        "stressed_mpe_scenario3": "731",
+        "stressed_mpe_scenario4": "637",
+        "stressed_mpe_scenario5": "717",
+        "stressed_mpe_scenario6": "955",
+        "stressed_mpe_scenario7": "43349",
+        "stressed_mpe_scenario8": "77",
+        "stressed_mpe_scenario9": "871",
+        "stressed_mpe_scenario10": "3711",
+        "stressed_epe_scenario10": "72013",
+        "stressed_epe_scenario1": "54432",
+        "stressed_epe_scenario2": "9250",
+        "stressed_epe_scenario3": "7447",
+        "stressed_epe_scenario4": "4468",
+        "stressed_epe_scenario5": "9165",
+        "stressed_epe_scenario6": "910",
+        "stressed_epe_scenario7": "9658",
+        "stressed_epe_scenario8": "40495",
+        "stressed_epe_scenario9": "79755",
+        "stressed_ce_scenario10": "465",
+        "stressed_ce_scenario1": "417",
+        "stressed_ce_scenario2": "3551",
+        "stressed_ce_scenario3": "8256",
+        "stressed_ce_scenario4": "4445",
+        "stressed_ce_scenario5": "8141",
+        "stressed_ce_scenario6": "620",
+        "stressed_ce_scenario7": "6349",
+        "stressed_ce_scenario8": "5021",
+        "stressed_ce_scenario9": "8386399",
+        "_of_new_trades": "5995",
+        "_of_expired_trades": "95872",
+        "new_counterparty_flag": "Yes",
+        "active_mpe_limit": "954927318",
+        "active_epe_limit": "801227",
+        "facility_id": "FAC_1002",
+        "buffer": "957",
+        "internal_entity": "NASDAQ",
+        "revolver_status": "Active",
+        "tenor_month": "59",
+        "revolver_single_line": "RSL_215",
+        "settlement_limit": null,
+        "counterparty_country": "UK",
+        "counterparty_sector": "Tech",
+        "ultimate_parent_sun_id": "795940",
+        "ultimate_parent_name": "NASDAQP",
+        "ultimate_parent_country": "JP",
+        "ultimate_parent_sector": "Finance",
+        "dv01": "47814",
+        "dv01_by_ir_curve1": "2726",
+        "dv01_by_ir_curve2": "-1924",
+        "dv01_by_ir_curve3": "-169",
+        "dv01_by_ir_curve4": "-36",
+        "dv01_by_ir_curve5": "-35",
+        "dv01_by_ir_curve6": "788",
+        "fx01": "174",
+        "fx01_by_ir_curve1": "14307",
+        "fx01_by_ir_curve2": "-374",
+        "fx01_by_ir_curve3": "264",
+        "fx01_by_ir_curve4": "3062",
+        "fx01_by_ir_curve5": "4909",
+        "vega": "-42",
+        "internal_entities": "NASDAQ",
+        "_of_new_trades_monthly": "19",
+        "_of_expired_trades_monthly": "16",
+        "base_mtm": "-252",
+        "sb_notional": "2170",
+        "sl_notional": "9939",
+        "sb_notional_limit": "5879",
+        "sl_notional_limit": "6255",
+        "notional": "55897",
+        "agent_sun_id": "91239",
+        "trader_books": "NASDA",
+        "counterparty_industry": "Insur",
+        "sb_credit_limit": "6047",
+        "sl_credit_limit": "6257",
+        "non_ig_notional": "5864",
+        "counterparty_type": "Fund",
+        "stressed_mtm_scenario1": "18257",
+        "stressed_mtm_scenario2": "-3196",
+        "stressed_mtm_scenario3": "34578",
+        "stressed_mtm_scenario4": "-2413",
+        "stressed_mtm_scenario5": "35104",
+        "stressed_mtm_scenario6": "-3798",
+        "stressed_mtm_scenario7": "-3612",
+        "stressed_mtm_scenario8": "-190",
+        "stressed_mtm_scenario9": "6684",
+        "stressed_mtm_scenario10": "12265",
+        "stressed_ce_im_vm_scenario1": "75816",
+        "stressed_ce_im_vm_scenario2": "48598",
+        "stressed_ce_im_vm_scenario3": "72810",
+        "stressed_ce_im_vm_scenario4": "56543",
+        "stressed_ce_im_vm_scenario5": "57824",
+        "stressed_ce_im_vm_scenario6": "65591",
+        "stressed_ce_im_vm_scenario7": "29458",
+        "stressed_ce_im_vm_scenario8": "91348",
+        "stressed_ce_im_vm_scenario9": "25144",
+        "stressed_ce_im_vm_scenario10": "67752"
+      }
+    ]
+  },
+  "trade_new": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT",
+        "nullable": false,
+        "default": null,
+        "comment": null
+      },
+      {
+        "name": "column_name",
+        "type": "VARCHAR(13)",
+        "nullable": true,
+        "default": null,
+        "comment": "Primary key"
+      },
+      {
+        "name": "as_of_date",
+        "type": "VARCHAR(9)",
+        "nullable": true,
+        "default": null,
+        "comment": "Description"
+      },
+      {
+        "name": "trade_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date on which the portfolio snapshot was taken."
+      },
+      {
+        "name": "entity",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Unique identifier for each trade."
+      },
+      {
+        "name": "legal_entity",
+        "type": "VARCHAR(17)",
+        "nullable": true,
+        "default": null,
+        "comment": "The internal business unit or division managing the trade."
+      },
+      {
+        "name": "legal_doc_id",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "The legal company name under which the trade is booked."
+      },
+      {
+        "name": "reporting_counterparty_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Reference ID for the legal documentation associated with the trade."
+      },
+      {
+        "name": "reporting_counterparty_name",
+        "type": "VARCHAR(14)",
+        "nullable": true,
+        "default": null,
+        "comment": "Internal system ID used for reporting purposes."
+      },
+      {
+        "name": "facility_id",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Name of the counterparty used in reports."
+      },
+      {
+        "name": "trade_category",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Identifier for the financial facility or agreement under which the trade was made."
+      },
+      {
+        "name": "asset_class",
+        "type": "VARCHAR(25)",
+        "nullable": true,
+        "default": null,
+        "comment": "Classification of the trade (e.g., swaps, FX Spot)."
+      },
+      {
+        "name": "ccp_flag",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Type of financial asset (e.g., equity, Bonds)."
+      },
+      {
+        "name": "product_type",
+        "type": "VARCHAR(11)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates whether the trade is cleared through a Central Counterparty (Yes/No)."
+      },
+      {
+        "name": "trade_date",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "Specific financial product involved (e.g., Derivatives, SFT)."
+      },
+      {
+        "name": "maturity_date",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date when the trade was executed."
+      },
+      {
+        "name": "maturity_bucket",
+        "type": "VARCHAR(12)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date when the trade or financial instrument reaches its maturity."
+      },
+      {
+        "name": "currency",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Grouping of trades based on their maturity dates (e.g., 0-1 year, 1-5 years)."
+      },
+      {
+        "name": "notional",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Currency in which the trade is denominated."
+      },
+      {
+        "name": "notional_usd",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "The principal amount of the trade."
+      },
+      {
+        "name": "official_mtm",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Notional amount converted to USD."
+      },
+      {
+        "name": "batch_mtm",
+        "type": "VARCHAR(7)",
+        "nullable": true,
+        "default": null,
+        "comment": "Official mark-to-market value of the trade."
+      },
+      {
+        "name": "msa_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "MTM value calculated in batch processing."
+      },
+      {
+        "name": "batch_mtm_unfloored",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Identifier for the Master Service Agreement related to the trade."
+      },
+      {
+        "name": "start_date",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "MTM value before applying any floor or minimum value."
+      },
+      {
+        "name": "settlement_currency",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "The beginning date of the trade or contract."
+      },
+      {
+        "name": "settlement_amount",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Currency used for settling the trade."
+      },
+      {
+        "name": "settlement_amount_usd",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Amount to be settled in the settlement currency."
+      },
+      {
+        "name": "tenor_month",
+        "type": "VARCHAR(2)",
+        "nullable": true,
+        "default": null,
+        "comment": "Settlement amount converted to USD."
+      },
+      {
+        "name": "mpe_limit",
+        "type": "VARCHAR(5)",
+        "nullable": true,
+        "default": null,
+        "comment": "Duration of the trade in months."
+      },
+      {
+        "name": "revolver_single_line",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum potential exposure limit for the trade."
+      },
+      {
+        "name": "settlement_limit_amount",
+        "type": "VARCHAR(4)",
+        "nullable": true,
+        "default": null,
+        "comment": "Indicates whether the trade is a revolving credit line or a single draw."
+      },
+      {
+        "name": "break_date",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "default": null,
+        "comment": "Maximum allowable settlement amount for the trade."
+      },
+      {
+        "name": "csa_id",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "The date when a break or early termination of the trade may occur."
+      },
+      {
+        "name": "pay_leg_currency",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Identifier for the Credit Support Annex, which governs collateral terms."
+      },
+      {
+        "name": "pay_leg_notional",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Currency of the payment leg in a derivative."
+      },
+      {
+        "name": "rec_leg_currency",
+        "type": "VARCHAR(3)",
+        "nullable": true,
+        "default": null,
+        "comment": "Notional amount of the payment leg."
+      },
+      {
+        "name": "rec_leg_notional",
+        "type": "VARCHAR(6)",
+        "nullable": true,
+        "default": null,
+        "comment": "Currency of the receiving leg."
+      },
+      {
+        "name": "rating_group",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Notional amount of the receiving leg."
+      },
+      {
+        "name": "collateral_usd",
+        "type": "VARCHAR(8)",
+        "nullable": true,
+        "default": null,
+        "comment": "Internal rating group assigned by SMBC for risk assessment."
+      }
+    ],
+    "foreign_keys": [
+      {
+        "name": "fk_trade_new_counterparty",
+        "constrained_columns": [
+          "reporting_counterparty_id"
+        ],
+        "referred_table": "counterparty_new",
+        "referred_columns": [
+          "counterparty_id"
+        ]
+      }
+    ],
+    "sample_data": [
+      {
+        "id": 501,
+        "column_name": "Trade_1",
+        "as_of_date": "2024-10-1",
+        "trade_id": "T1",
+        "entity": "TSE",
+        "legal_entity": "TSE",
+        "legal_doc_id": "DOC1",
+        "reporting_counterparty_id": "1000",
+        "reporting_counterparty_name": "TSE_Corp",
+        "facility_id": "FAC1000",
+        "trade_category": "OTC",
+        "asset_class": "CDS",
+        "ccp_flag": "No",
+        "product_type": "Swaps",
+        "trade_date": "2024-10-17",
+        "maturity_date": "2025-08-28",
+        "maturity_bucket": "6M",
+        "currency": "CAD",
+        "notional": "64549",
+        "notional_usd": "66755",
+        "official_mtm": "-6257",
+        "batch_mtm": "9442",
+        "msa_id": "M1000",
+        "batch_mtm_unfloored": "34414",
+        "start_date": "2024-10-04",
+        "settlement_currency": "CAD",
+        "settlement_amount": "95237",
+        "settlement_amount_usd": "51991",
+        "tenor_month": "41",
+        "mpe_limit": "78914",
+        "revolver_single_line": "RSL1",
+        "settlement_limit_amount": "5255",
+        "break_date": "2025-08-27",
+        "csa_id": "C1000",
+        "pay_leg_currency": "CAD",
+        "pay_leg_notional": "32274",
+        "rec_leg_currency": "EUR",
+        "rec_leg_notional": "32274",
+        "rating_group": "BBB",
+        "collateral_usd": "6253275"
+      },
+      {
+        "id": 502,
+        "column_name": "Trade_2",
+        "as_of_date": "2024-10-0",
+        "trade_id": "T2",
+        "entity": "TSE",
+        "legal_entity": "TSE",
+        "legal_doc_id": "DOC2",
+        "reporting_counterparty_id": "1000",
+        "reporting_counterparty_name": "TSE_Corp",
+        "facility_id": "FAC1000",
+        "trade_category": "OTC",
+        "asset_class": "FX",
+        "ccp_flag": "Yes",
+        "product_type": "Derivatives",
+        "trade_date": "2024-10-05",
+        "maturity_date": "2025-07-27",
+        "maturity_bucket": "3M",
+        "currency": "JPY",
+        "notional": "59309",
+        "notional_usd": "58034",
+        "official_mtm": "12639",
+        "batch_mtm": "36197",
+        "msa_id": "M1000",
+        "batch_mtm_unfloored": "-42410",
+        "start_date": "2024-09-25",
+        "settlement_currency": "JPY",
+        "settlement_amount": "87518",
+        "settlement_amount_usd": "76671",
+        "tenor_month": "17",
+        "mpe_limit": "94439",
+        "revolver_single_line": "RSL2",
+        "settlement_limit_amount": "9213",
+        "break_date": "2025-07-08",
+        "csa_id": "C1000",
+        "pay_leg_currency": "JPY",
+        "pay_leg_notional": "29654",
+        "rec_leg_currency": "USD",
+        "rec_leg_notional": "29654",
+        "rating_group": "BBB",
+        "collateral_usd": "6106544"
+      },
+      {
+        "id": 503,
+        "column_name": "Trade_3",
+        "as_of_date": "2024-12-0",
+        "trade_id": "T3",
+        "entity": "TSE",
+        "legal_entity": "TSE",
+        "legal_doc_id": "DOC3",
+        "reporting_counterparty_id": "1000",
+        "reporting_counterparty_name": "TSE_Corp",
+        "facility_id": "FAC1000",
+        "trade_category": "OTC",
+        "asset_class": "CDS",
+        "ccp_flag": "No",
+        "product_type": "Options",
+        "trade_date": "2024-12-09",
+        "maturity_date": "2026-07-13",
+        "maturity_bucket": "2Y",
+        "currency": "JPY",
+        "notional": "67163",
+        "notional_usd": "66260",
+        "official_mtm": "144",
+        "batch_mtm": "-17839",
+        "msa_id": "M1000",
+        "batch_mtm_unfloored": "23734",
+        "start_date": "2024-12-06",
+        "settlement_currency": "JPY",
+        "settlement_amount": "43208",
+        "settlement_amount_usd": "83224",
+        "tenor_month": "46",
+        "mpe_limit": "92074",
+        "revolver_single_line": "RSL3",
+        "settlement_limit_amount": "7653",
+        "break_date": "2026-07-09",
+        "csa_id": "C1000",
+        "pay_leg_currency": "JPY",
+        "pay_leg_notional": "33581",
+        "rec_leg_currency": "JPY",
+        "rec_leg_notional": "33581",
+        "rating_group": "BBB",
+        "collateral_usd": "9130098"
+      }
+    ]
+  }
+}

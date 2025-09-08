@@ -1,0 +1,182 @@
+[
+  {
+    "question": "Which are the top 5 counterparties by MPE value?",
+    "sql": "SELECT \n    counterparty_name, \n    counterparty_id, \n    CAST(mpe AS DECIMAL(15,2)) as mpe_value \nFROM counterparty_new \nORDER BY CAST(mpe AS DECIMAL(15,2)) DESC \nLIMIT 5;",
+    "pattern_type": "top_counterparty_mpe"
+  },
+  {
+    "question": "Which are the top 10 counterparties by MPE value?",
+    "sql": "SELECT \n    counterparty_name, \n    counterparty_id, \n    CAST(mpe AS DECIMAL(15,2)) as mpe_value \nFROM counterparty_new \nORDER BY CAST(mpe AS DECIMAL(15,2)) DESC \nLIMIT 10;",
+    "pattern_type": "top_counterparty_mpe"
+  },
+  {
+    "question": "Show me top counterparties by MPE",
+    "sql": "SELECT \n    counterparty_name, \n    counterparty_id, \n    CAST(mpe AS DECIMAL(15,2)) as mpe_value \nFROM counterparty_new \nORDER BY CAST(mpe AS DECIMAL(15,2)) DESC \nLIMIT 10;",
+    "pattern_type": "top_counterparty_mpe"
+  },
+  {
+    "question": "Which rating bucket has the highest total notional exposure?",
+    "sql": "SELECT \n    cp.internal_rating, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.internal_rating \nORDER BY total_notional DESC \nLIMIT 1;",
+    "pattern_type": "rating_notional"
+  },
+  {
+    "question": "What rating has the most notional exposure?",
+    "sql": "SELECT * FROM concentration_new LIMIT 20;",
+    "pattern_type": "rating_notional"
+  },
+  {
+    "question": "Which rating group has highest notional?",
+    "sql": "SELECT \n    cp.internal_rating, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.internal_rating \nORDER BY total_notional DESC \nLIMIT 1;",
+    "pattern_type": "rating_notional"
+  },
+  {
+    "question": "Which counterparties have the highest total notional exposure?",
+    "sql": "SELECT \n    cp.counterparty_name, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.counterparty_id, cp.counterparty_name \nORDER BY total_notional DESC \nLIMIT 20;",
+    "pattern_type": "counterparty_highest_notional"
+  },
+  {
+    "question": "Which counterparties have the lowest total notional exposure?",
+    "sql": "SELECT \n    cp.counterparty_name, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.counterparty_id, cp.counterparty_name \nORDER BY total_notional ASC \nLIMIT 20;",
+    "pattern_type": "counterparty_lowest_notional"
+  },
+  {
+    "question": "Show counterparties with highest notional",
+    "sql": "SELECT \n    cp.counterparty_name, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.counterparty_id, cp.counterparty_name \nORDER BY total_notional DESC \nLIMIT 20;",
+    "pattern_type": "counterparty_highest_notional"
+  },
+  {
+    "question": "Show counterparties with lowest notional",
+    "sql": "SELECT \n    cp.counterparty_name, \n    SUM(CAST(t.notional_usd AS DECIMAL(15,2))) as total_notional \nFROM counterparty_new cp \nJOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.counterparty_id, cp.counterparty_name \nORDER BY total_notional ASC \nLIMIT 20;",
+    "pattern_type": "counterparty_lowest_notional"
+  },
+  {
+    "question": "How many trades exist per counterparty?",
+    "sql": "SELECT \n    cp.counterparty_name, \n    COUNT(t.id) as trade_count \nFROM counterparty_new cp \nLEFT JOIN trade_new t ON cp.counterparty_id = t.reporting_counterparty_id \nGROUP BY cp.counterparty_id, cp.counterparty_name \nORDER BY trade_count DESC;",
+    "pattern_type": "trade_count"
+  },
+  {
+    "question": "Trade count by counterparty",
+    "sql": "SELECT * FROM counterparty_new LIMIT 20;",
+    "pattern_type": "trade_count"
+  },
+  {
+    "question": "Number of trades per counterparty",
+    "sql": "SELECT * FROM counterparty_new LIMIT 20;",
+    "pattern_type": "trade_count"
+  },
+  {
+    "question": "Count trades for each counterparty",
+    "sql": "SELECT * FROM counterparty_new LIMIT 20;",
+    "pattern_type": "trade_count"
+  },
+  {
+    "question": "What is the highest single trade notional?",
+    "sql": "SELECT \n    t.trade_id, \n    cp.counterparty_name, \n    t.notional_usd, \n    t.currency \nFROM trade_new t \nJOIN counterparty_new cp ON t.reporting_counterparty_id = cp.counterparty_id \nORDER BY CAST(t.notional_usd AS DECIMAL(15,2)) DESC \nLIMIT 1;",
+    "pattern_type": "highest_trade"
+  },
+  {
+    "question": "Largest trade by notional value",
+    "sql": "SELECT * FROM trade_new LIMIT 20;",
+    "pattern_type": "highest_trade"
+  },
+  {
+    "question": "Show the biggest trade",
+    "sql": "SELECT * FROM trade_new LIMIT 20;",
+    "pattern_type": "highest_trade"
+  },
+  {
+    "question": "Which counterparties have breached their MPE limits?",
+    "sql": "SELECT \n    counterparty_name, \n    CAST(mpe AS DECIMAL(15,2)) as current_mpe, \n    CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit \nFROM counterparty_new \nWHERE CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) \nORDER BY current_mpe DESC;",
+    "pattern_type": "limit_breach"
+  },
+  {
+    "question": "Show limit breaches",
+    "sql": "SELECT \n    counterparty_name, \n    CAST(mpe AS DECIMAL(15,2)) as current_mpe, \n    CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit \nFROM counterparty_new \nWHERE CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) \nORDER BY current_mpe DESC;",
+    "pattern_type": "limit_breach"
+  },
+  {
+    "question": "Counterparties exceeding limits",
+    "sql": "SELECT \n    counterparty_name, \n    CAST(mpe AS DECIMAL(15,2)) as current_mpe, \n    CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit \nFROM counterparty_new \nWHERE CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) \nORDER BY current_mpe DESC;",
+    "pattern_type": "limit_breach"
+  },
+  {
+    "question": "Who has breached limits?",
+    "sql": "SELECT \n    counterparty_name, \n    CAST(mpe AS DECIMAL(15,2)) as current_mpe, \n    CAST(mpe_limit AS DECIMAL(15,2)) as mpe_limit \nFROM counterparty_new \nWHERE CAST(mpe AS DECIMAL(15,2)) > CAST(mpe_limit AS DECIMAL(15,2)) \nORDER BY current_mpe DESC;",
+    "pattern_type": "limit_breach"
+  },
+  {
+    "question": "What is the distribution of counterparties by rating?",
+    "sql": "SELECT \n    internal_rating, \n    COUNT(*) as count, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE internal_rating IS NOT NULL \nGROUP BY internal_rating \nORDER BY total_exposure DESC;",
+    "pattern_type": "rating_distribution"
+  },
+  {
+    "question": "Rating distribution",
+    "sql": "SELECT \n    internal_rating, \n    COUNT(*) as count, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE internal_rating IS NOT NULL \nGROUP BY internal_rating \nORDER BY total_exposure DESC;",
+    "pattern_type": "rating_distribution"
+  },
+  {
+    "question": "Show counterparties by rating",
+    "sql": "SELECT * FROM counterparty_new LIMIT 20;",
+    "pattern_type": "rating_distribution"
+  },
+  {
+    "question": "What is the average trade notional exposure by sector?",
+    "sql": "SELECT \n    cp.counterparty_sector, \n    AVG(CAST(t.notional_usd AS DECIMAL(15,2))) as avg_notional \nFROM trade_new t \nJOIN counterparty_new cp ON t.reporting_counterparty_id = cp.counterparty_id \nWHERE cp.counterparty_sector IS NOT NULL \nGROUP BY cp.counterparty_sector \nORDER BY avg_notional DESC;",
+    "pattern_type": "sector_average"
+  },
+  {
+    "question": "Average notional by sector",
+    "sql": "SELECT \n    cp.counterparty_sector, \n    AVG(CAST(t.notional_usd AS DECIMAL(15,2))) as avg_notional \nFROM trade_new t \nJOIN counterparty_new cp ON t.reporting_counterparty_id = cp.counterparty_id \nWHERE cp.counterparty_sector IS NOT NULL \nGROUP BY cp.counterparty_sector \nORDER BY avg_notional DESC;",
+    "pattern_type": "sector_average"
+  },
+  {
+    "question": "Sector average exposure",
+    "sql": "SELECT * FROM concentration_new LIMIT 20;",
+    "pattern_type": "sector_average"
+  },
+  {
+    "question": "Which sector has the lowest exposure?",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure ASC \nLIMIT 1;",
+    "pattern_type": "sector_lowest"
+  },
+  {
+    "question": "Which sector has the minimum exposure?",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure ASC \nLIMIT 1;",
+    "pattern_type": "sector_lowest"
+  },
+  {
+    "question": "Sector with smallest exposure",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure ASC \nLIMIT 1;",
+    "pattern_type": "sector_lowest"
+  },
+  {
+    "question": "Which sector has least exposure?",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure ASC \nLIMIT 1;",
+    "pattern_type": "sector_lowest"
+  },
+  {
+    "question": "Sector with minimum exposure",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure ASC \nLIMIT 1;",
+    "pattern_type": "sector_lowest"
+  },
+  {
+    "question": "Which sector has the largest concentration exposure?",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure DESC \nLIMIT 1;",
+    "pattern_type": "sector_highest"
+  },
+  {
+    "question": "Sector with highest exposure",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure DESC \nLIMIT 1;",
+    "pattern_type": "sector_highest"
+  },
+  {
+    "question": "Which sector has most exposure?",
+    "sql": "SELECT * FROM concentration_new LIMIT 20;",
+    "pattern_type": "sector_highest"
+  },
+  {
+    "question": "Largest sector exposure",
+    "sql": "SELECT \n    counterparty_sector, \n    SUM(CAST(mpe AS DECIMAL(15,2))) as total_exposure \nFROM counterparty_new \nWHERE counterparty_sector IS NOT NULL \nGROUP BY counterparty_sector \nORDER BY total_exposure DESC \nLIMIT 1;",
+    "pattern_type": "sector_highest"
+  }
+]
